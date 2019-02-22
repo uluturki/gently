@@ -1,2 +1,2 @@
 # gently
-Holistic deployment of wireless networks with regard to the general interconnectedness of all things.
+Holistic wireless network deployment simulator with regard to the general interconnectedness of all things.
