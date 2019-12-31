@@ -1,3 +1,7 @@
+### Warning
+I took the lessons learned here and am building a new tool with physical layer models (channel, interference, ...) and a reinforcement learning environment, it will be public soon. I am keeping this page up as it has the code for the paper below.
+
+
 # gently
 Holistic wireless network deployment simulator with regard to the general interconnectedness of all things. Or a 3D Aerial Wireless Networks deployment simulator with continous space and reasonably fast analytical raytracing. If this is interesting to you, please consider reading the following article, which is why this repo exists:
 ```
@@ -10,7 +14,3 @@ Holistic wireless network deployment simulator with regard to the general interc
   organization={IEEE}
 }
 ```
-### Warning
-This repo is currently in the middle of a refactoring, since I didn't intend to make it into an actual tool in the beginning. Please bear with me while I sort things out. If you would like to use it now or help with development, let me know.
-
-Update: I took the lessons learned here and am building a new tool, it will hopefully be public soon.
