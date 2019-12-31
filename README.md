@@ -3,6 +3,9 @@ I took the lessons learned here and am building a new tool with physical layer m
 
 
 # gently
+
+![screenshot](https://github.com/uluturki/gently/blob/master/img/sim_example_3d_3d.png)
+
 Holistic wireless network deployment simulator with regard to the general interconnectedness of all things. Or a 3D Aerial Wireless Networks deployment simulator with continous space and reasonably fast analytical raytracing. If this is interesting to you, please consider reading the following article, which is why this repo exists:
 ```
 @inproceedings{uluturk2019efficient,
