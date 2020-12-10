@@ -2,12 +2,12 @@ import numpy as np
 import copy
 
 class Point:
-    # storing as np_array because : 1. Not a very large number of points are used 2. There is plenty of memory so no need to avoid duplication 3. Profiling showed array casting eats a lot of time.
+    # storing as np_array because : 1. Not a very large number of points are used 2. There is plenty of memory so no need to avoid duplication 
+    # 3. Profiling showed array casting eats a lot of time.
     np_array = {} #maybe name this just array...
-    x = {}
-    y = {}
-    z = {}
-    # learn how to overload this and have it receive a np.array as well maybe.
+    x,y,z = {}, {}, {}
+
+    # @TODO Maybe overload this and have it receive a np.array as well.
     def __init__(self,x,y,z):
         self.x = x # dict('x','y','z')
         self.y = y # dict('width','length')
@@ -42,7 +42,7 @@ class RectPrism:
     # @TODO: overload this for different definitions of prisms, not necessary right now.
     # base_origin is a dictionary {'x','y','z'}, it is the lower left vertex of the base ! Update: This is now Point class defined above.
     # base_size is a dictionary {'width','length'}, it defines the lengts of the base edges.
-        # length is added to 'x' and width is added to 'y' dimensions.
+    # 	length is added to 'x' and width is added to 'y' dimensions.
     # height is a scalar, it is the height of the prism
     def __init__(self,base_origin,base_size,height):
         self.base_origin = base_origin # This is now Point class
@@ -57,9 +57,7 @@ class RectPrism:
         self.update_surfaces()
         self.update_mesh()
 
-        #self.update_surfaces() # it's not really comp. difficult so no harm doing it in the init.
-
-    # This is done by creating a unit cube on web interface and applying transforms to it.
+    # This is done by creating a unit cube and applying transforms to it.
     def update_mesh(self):
         self.mesh = { 'x': np.array([0, 1, 1, 0, 0, 1, 1, 0])*self.base_size['length'] + self.base_origin.x,
                       'y': np.array([0, 0, 1, 1, 0, 0, 1, 1])*self.base_size['width'] + self.base_origin.y,
@@ -97,25 +95,22 @@ class RectPrism:
 
     # https://stackoverflow.com/questions/29720910/fastest-way-to-search-if-a-coordinate-is-inside-a-cube
     def contains_point(self,point): # point = Point Object
-#        return all([self.x_range[0] <= point.x <= self.x_range[1],
-#                    self.y_range[0] <= point.y <= self.y_range[1],
-#                    self.z_range[0] <= point.z <= self.z_range[1]])
+	# wrapped in generator expression so it will short-circuit properly.
         return all( self.range_list[idx][0] <= point.np_array[idx] <= self.range_list[idx][1]
-                    for idx in np.arange(len(self.range_list)) ) # wrapped in generator expression so it will short-circuit properly.
-
+                    for idx in np.arange(len(self.range_list)) ) 
 
 
 class Surface2D:
-    p1 = {}
-    p2 = {}
-    p3 = {}
+    p1, p2, p3 = {}, {}, {}
+
     normal_vector = {}
 
     # x_range (left,right), y_range(bot,top) is also the bounding box, useful for all sorts of collusion detection stuff.
 
     range_list = {}
 
-    def __init__(self,p1,p2,p3=None,normal_vector = True): # p1,p2,p3 are Point Objects
+    def __init__(self,p1,p2,p3=None,normal_vector = True): 
+    # p1,p2,p3 are Point Objects
     # If only gets p1 and p2, then assumes then may not be on the same planes and projects it on xy plane, becaue its the only use case for now '''
         self.p1 = p1
         self.p2 = p2
@@ -125,7 +120,7 @@ class Surface2D:
             self.p3 = Point(p1.x,p2.y,0) # give the projection of the bounding box of p1,p2 on xy plane.
             # first find which plane surface lies
             # gets the index of the fixed axis
-            #fixed_axis = np.where((p1.np_array - p2.np_array) == 0)
+            # fixed_axis = np.where((p1.np_array - p2.np_array) == 0)
             # Actually not necessary because I only care about
 
         # store these instead of calculating every time for a tiny speed boost...
@@ -133,9 +128,7 @@ class Surface2D:
         self.range_list.append((min(self.p1.x,self.p2.x,self.p3.x),max(self.p1.x,self.p2.x,self.p3.x))) #x
         self.range_list.append((min(self.p1.y,self.p2.y,self.p3.y),max(self.p1.y,self.p2.y,self.p3.y)))  #y
         self.range_list.append((min(self.p1.z,self.p2.z,self.p3.z),max(self.p1.z,self.p2.z,self.p3.z)))              #z
-        #self.x_range = (min(self.p1.x,self.p2.x,self.p3.x),max(self.p1.x,self.p2.x,self.p3.x))
-        #self.y_range = (min(self.p1.y,self.p2.y,self.p3.y),max(self.p1.y,self.p2.y,self.p3.y))
-        #self.z_range = (min(self.p1.z,self.p2.z,self.p3.z),max(self.p1.z,self.p2.z,self.p3.z))
+
         # calculate and store the normal vector, speeds up 10x. However, if not going to be used, then no reason to compute. It's slow.
         if normal_vector is True:
             self.update_normal_vector()
@@ -165,8 +158,7 @@ class Surface2D:
     def get_normal_vector(self):
         # Source: http://math.mit.edu/classes/18.02/notes/lecture5compl-09.pdf
         #first get the direction vectors of P1P2 and P1P3
-        #v1 = np.array(self.p2) - np.array(self.p1)
-        #v2 = np.array(self.p3) - np.array(self.p1)
+	
         v1 = self.p2.np_array - self.p1.np_array # casting to array no longer necessary, thanks to Point class
         v2 = self.p3.np_array - self.p1.np_array
 
@@ -193,7 +185,7 @@ class Surface2D:
             epsilon is the desired precision
             return a Vector or None (when the intersection can't be found).
         """
-        #u = np.array(l_p2) - np.array(l_p1)
+	
         u = l_p2.np_array - l_p1.np_array
         denominator = np.dot(self.normal_vector, u)
         if abs(denominator) > epsilon:
@@ -207,8 +199,6 @@ class Surface2D:
             nominator = -np.dot(self.normal_vector,w)
             sI = nominator / denominator
 
-            #print(c_p)
-            #print(fac)
             # Check if the point is within the line segment
             if 0 <= sI <= 1: #this is not working, figure out why or figure out a different way to implement this...
                 # It is indeed on the segment, check if within the given plane window
